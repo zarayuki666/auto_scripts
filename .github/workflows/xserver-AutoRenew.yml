@@ -142,7 +142,7 @@ jobs:
               printf "Runner repo: %s | Run ID: %s | UTC: %s\n\n" \
                 "$GITHUB_REPOSITORY" "$GITHUB_RUN_ID" "$TIMESTAMP"
               cat "$OUTPUT_DIR/report-notify.md"
-            } > temp && mv temp "$OUTPUT_DIR/report-notify.md"
+            } > "$OUTPUT_DIR/temp" && mv "$OUTPUT_DIR/temp" "$OUTPUT_DIR/report-notify.md"
             echo "✅ 报告头部已添加"
           else
             echo "⚠️ 报告文件不存在，跳过添加头部"
@@ -162,12 +162,19 @@ jobs:
       - name: 💾 提交和推送更改
         if: always()
         run: |
+          set -e
           OUTPUT_DIR="${{ github.repository_owner }}-${{ github.event.repository.name }}-${{ env.PROJECT_DIR }}"
+          echo "📂 OUTPUT_DIR: $OUTPUT_DIR"
+          echo "📂 当前目录: $(pwd)"
+          echo "📂 检查 OUTPUT_DIR 内容:"
+          ls -la "$OUTPUT_DIR" 2>/dev/null || echo "⚠️ OUTPUT_DIR 不存在"
+          
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           
           # 创建 xserver 目录
           mkdir -p xserver
+          echo "✅ xserver 目录已创建"
           
           # 从私库目录复制文件到公开库的 xserver 目录
           if [ -f "$OUTPUT_DIR/report-notify.md" ]; then
@@ -186,6 +193,9 @@ jobs:
             echo "⚠️ 时间文件不存在，创建新文件"
             date +'%Y-%m-%d %H:%M:%S' > "xserver/time.txt"
           fi
+          
+          echo "📂 xserver 目录内容:"
+          ls -la xserver/
           
           # 添加文件到 git
           git add "xserver/report-notify.md" "xserver/time.txt" 2>/dev/null || true
