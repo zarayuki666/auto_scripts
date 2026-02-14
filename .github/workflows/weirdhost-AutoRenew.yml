@@ -1,135 +1,92 @@
 name: 🔄 WeirdHost Auto Renew
 
 on:
-  # 手动触发
-  workflow_dispatch:
-  # 定时触发
   schedule:
-    # UTC 04:30 (北京时间 12:30)
-    - cron: "30 4 * * *"
+    # 每天 UTC 时间 3:01（北京时间 11:01）
+    - cron: '1 3 * * *'
+  workflow_dispatch:
 
-# 权限配置：允许提交和推送更改
 permissions:
   contents: write
 
 jobs:
-  run:
+  renew:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
-    env:
-      PROJECT_DIR: weirdhost
-      SCRIPT_NAME: kr.py
-      SCRIPT_DESC: WeirdHost 续期脚本
 
     steps:
-      # 步骤 1: 检出公开仓库
-      - name: 📥 检出公开仓库
-        uses: actions/checkout@v4
-
-      # 步骤 1.5: 创建输出目录
-      - name: 📁 创建输出目录
-        run: mkdir -p ${{ github.repository_owner }}-${{ github.event.repository.name }}-${{ env.PROJECT_DIR }}
-        working-directory: .
-
-      # 步骤 2: 检出私有仓库
-      - name: 🔐 检出私有仓库
+      # ===============================
+      # 1️⃣ checkout 当前仓库（用于 time.txt）
+      # ===============================
+      - name: Checkout current repo
         uses: actions/checkout@v4
         with:
-          repository: jyucoeng/auto_weirdhost_private
+          path: current
+
+      # ===============================
+      # 2️⃣ checkout 私库 
+      # ===============================
+      - name: Checkout private repo
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ github.repository_owner }}/auto-weirdhost-private
           token: ${{ secrets.PRIVATE_REPO_TOKEN }}
           ref: main
-          path: ${{ github.repository_owner }}-${{ github.event.repository.name }}-${{ env.PROJECT_DIR }}
-          fetch-depth: 1
+          path: scripts
 
-      # 步骤 3: 设置 Python 环境
-      - name: 🐍 设置 Python 3.10
+      - name: Setup Python
         uses: actions/setup-python@v5
         with:
-          python-version: "3.10"
-          cache: "pip"
-          cache-dependency-path: "**/requirements.txt"
+          python-version: '3.11'
 
-      # 步骤 4: 安装系统依赖
-      - name: 📦 安装系统依赖
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y xvfb fonts-noto-cjk fonts-noto-cjk-extra
+      - name: Install dependencies
+        working-directory: scripts
+        run: pip install -r requirements.txt -q > /dev/null 2>&1
 
-      # 步骤 5: 安装 Python 依赖
-      - name: 📚 安装 Python 依赖
-        run: |
-          if [ -f requirements.txt ]; then
-            pip install -r requirements.txt
-          else
-            echo "⚠️ 未找到 requirements.txt，跳过依赖安装"
-          fi
-        working-directory: ${{ github.repository_owner }}-${{ github.event.repository.name }}-${{ env.PROJECT_DIR }}
-
-      # 步骤 5.5: 安装 Playwright 浏览器
-      - name: 🎭 安装 Playwright 浏览器
-        run: playwright install chromium
-        working-directory: ${{ github.repository_owner }}-${{ github.event.repository.name }}-${{ env.PROJECT_DIR }}
-
-      # 步骤 6: 添加随机延迟
-      - name: ⏳ 添加随机延迟
-        run: |
-          delay=$((RANDOM % 120))
-          echo "随机延迟: ${delay}秒"
-          sleep $delay
-
-      # 步骤 7: 执行脚本
-      - name: 🚀 执行 ${{ env.SCRIPT_DESC }}
+      - name: Run renew script
+        working-directory: scripts
         env:
-          REMEMBER_WEB_COOKIE: ${{ secrets.REMEMBER_WEB_COOKIE }}
-          #PTERODACTYL_SESSION: ${{ secrets.PTERODACTYL_SESSION }}
-          #格式为 124234267,dwidhiwh89
-          #WEIRDHOST_SERVER_IDS: ${{ secrets.WEIRDHOST_SERVER_IDS }}
-          #账号密码登录模式暂时不好用
-          #WEIRDHOST_EMAIL: ${{ secrets.WEIRDHOST_EMAIL }}
-          #WEIRDHOST_PASSWORD: ${{ secrets.WEIRDHOST_PASSWORD }}
+          HEADLESS: 'true'
+          TELEGRAM_BOT_TOKEN: ${{ secrets.WEIRDHOST_TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.WEIRDHOST_TELEGRAM_CHAT_ID }}
+          REMEMBER_WEB_COOKIE: ${{ secrets.WEIRDHOST_REMEMBER_WEB_COOKIE }}
+        run: python kr-renew.py
 
-          WEIRDHOST_TG_BOT_TOKEN: ${{ secrets.WEIRDHOST_TG_BOT_TOKEN }}
-          WEIRDHOST_TG_CHAT_ID: ${{ secrets.WEIRDHOST_TG_CHAT_ID }}
-        run: xvfb-run -a python ${{ env.SCRIPT_NAME }}
-        working-directory: ${{ github.repository_owner }}-${{ github.event.repository.name }}-${{ env.PROJECT_DIR }}
-
-      # 步骤 8: 上传截图到 artifacts，7天内可下载压缩包
-      - name: 📸 上传截图到 artifacts
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: weirdhost-screenshots
-          path: ${{ github.repository_owner }}-${{ github.event.repository.name }}-${{ env.PROJECT_DIR }}/screenshots
-          retention-days: 7
-          if-no-files-found: warn
-
-      # 步骤 9: 清理原始截图文件
-      - name: 🧹 清理原始截图文件
-        if: always()
-        run: |
-          OUTPUT_DIR="${{ github.repository_owner }}-${{ github.event.repository.name }}-${{ env.PROJECT_DIR }}"
-          if [ -d "$OUTPUT_DIR/screenshots" ]; then
-            echo "🧹 清理截图文件..."
-            rm -f "$OUTPUT_DIR/screenshots"/*.png
-            echo "✅ 截图文件已清理"
-          else
-            echo "⚠️ 截图目录不存在，无需清理"
-          fi
-
-      # 步骤 10: 提交时间文件到公开库
-      - name: ⏱️ 提交时间文件
-        if: always()
+      # ===============================
+      # 3️⃣ 提交 time.txt 到「当前仓库」weirdhost 文件夹
+      # ===============================
+      - name: Commit time.txt to current repo
+        if: success()
+        working-directory: current
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          mkdir -p weirdhost && echo "$(date +'%Y-%m-%d %H:%M:%S')" > weirdhost/time.txt
-          git add weirdhost/time.txt 2>/dev/null || true
+
+          mkdir -p weirdhost
+
+          if [ ! -f weirdhost/time.txt ]; then
+            echo "首次生成时间：$(date +'%Y-%m-%d %H:%M:%S')" > weirdhost/time.txt
+          else
+            echo "$(date +'%Y-%m-%d %H:%M:%S')" > weirdhost/time.txt
+          fi
+
+          git add weirdhost/time.txt
+
           if git diff --cached --quiet; then
             echo "无变化，无需提交"
           else
-            TIMESTAMP=$(date +'%Y-%m-%d %H:%M:%S')
-            git commit -m "⏱️ 更新 weirdhost 时间文件: $TIMESTAMP"
-            git fetch origin main
-            git push -f origin HEAD:main
-            echo "✅ 更改已推送"
+            git commit -m "⏱️ 更新 weirdhost 时间文件: $(date +'%Y-%m-%d %H:%M:%S')"
+            git push origin HEAD:main
           fi
+
+      # ===============================
+      # 4️⃣ artifacts
+      # ===============================
+      - name: Upload response JSON files
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: response-json
+          path: scripts/response_*.json
+          retention-days: 7
