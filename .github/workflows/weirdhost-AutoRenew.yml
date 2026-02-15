@@ -1,3 +1,19 @@
+# ... (你的 Checkout private repo 步骤) ...
+
+      # 👇👇👇 插入这步调试代码 👇👇👇
+      - name: 🔍 Debug - List files
+        run: |
+          echo "==== 查看 scripts 文件夹里有什么 ===="
+          ls -R scripts || echo "scripts 文件夹不存在！"
+          echo "==================================="
+
+      # ... (你原本的 Setup Python 步骤) ...
+
+      - name: Run renew script
+        working-directory: scripts
+        # ... (你的环境变量) ...
+        run: python kr-renew.py
+        
 name: 🔄 WeirdHost Auto Renew
 
 on:
