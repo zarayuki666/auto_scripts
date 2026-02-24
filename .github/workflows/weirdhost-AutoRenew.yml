@@ -28,7 +28,7 @@ jobs:
       - name: Checkout private repo
         uses: actions/checkout@v4
         with:
-          repository: zarayuki666/auto-weirdhost-private
+          repository: jyucoeng/auto-weirdhost-private
           token: ${{ secrets.PRIVATE_REPO_TOKEN }}
           ref: main
           path: scripts
