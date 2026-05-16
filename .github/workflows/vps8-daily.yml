@@ -27,8 +27,8 @@ jobs:
       - name: 🔐 检出私库脚本
         uses: actions/checkout@v4
         with:
-          repository: ${{ github.repository_owner }}/vps8-daily
-          token: ${{ secrets.PRIVATE_REPO_TOKEN }}
+          repository: ${{ github.repository_owner }}/vps-8
+          token: ${{ secrets.PRIVATE_REPO_TOKEN_VPS-8 }}
           path: scripts
 
       # =========================
