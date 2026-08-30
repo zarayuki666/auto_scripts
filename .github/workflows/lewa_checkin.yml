@@ -89,10 +89,10 @@ jobs:
       # 步骤 7: 执行脚本
       - name: 🚀 执行 ${{ env.SCRIPT_DESC }}
         env:
-          EMBY_USERNAME: ${{ secrets.EMBY_USERNAME }}
-          EMBY_PASSWORD: ${{ secrets.EMBY_PASSWORD }}
-          TG_BOT_TOKEN: ${{ secrets.TG_BOT_TOKEN }}
-          TG_CHAT_ID: ${{ secrets.TG_CHAT_ID }}
+          LEWAEMBY_USERNAME: ${{ secrets.LEWAEMBY_USERNAME }}
+          LEWAEMBY_PASSWORD: ${{ secrets.LEWAEMBY_PASSWORD }}
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
           HY2_PROXY_URL: ${{ secrets.HY2_PROXY_URL }}
           SOCKS_PORT: ${{ secrets.SOCKS_PORT || '51080' }}
         run: python ${{ env.SCRIPT_NAME }}
