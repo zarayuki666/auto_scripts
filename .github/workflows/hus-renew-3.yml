@@ -25,7 +25,7 @@ jobs:
       HUS_BATCH: ${{ secrets.HUS_BATCH_3 }}
       # 代理（若有独立代理可使用 HUS_HY2_PROXY_URL_3，默认沿用原代理）
       PROXY_CONTENT: ${{ secrets.HUS_HY2_PROXY_URL_3 || secrets.HUS_HY2_PROXY_URL }}
-      SOCKS_PORT: ${{ secrets.SOCKS_PORT || '10808' }}
+      SOCKS_PORT: ${{ secrets.SOCKS_PORT || '52822' }}
       # 可选
       SCREENSHOT_DIR: screenshots
       DEBUG_FLAG: "0"
