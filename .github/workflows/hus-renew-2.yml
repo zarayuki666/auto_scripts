@@ -2,7 +2,7 @@ name: 🔄 Hus Auto Renew 2
 
 on:
   schedule:
-    - cron: '37 0 * * *'  # 每天 UTC 00:37（错开运行时间，避免 Git 推送冲突）
+    - cron: '17 3 * * *'  # 每天 UTC 00:37（错开运行时间，避免 Git 推送冲突）
   workflow_dispatch:
 
 permissions:
