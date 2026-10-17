@@ -2,7 +2,7 @@ name: 🔄 Hus Auto Renew 5
 
 on:
   schedule:
-    - cron: '07 2 * * *'  # 每天 UTC 02:07 运行（与前序任务错开）
+    - cron: '07 12 * * *'  # 每天 UTC 02:07 运行（与前序任务错开）
   workflow_dispatch:
 
 permissions:
