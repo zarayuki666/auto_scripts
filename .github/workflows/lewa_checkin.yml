@@ -38,7 +38,7 @@ jobs:
       PROXY_CONTENT: ${{ secrets.HY2_PROXY_URL }}
       SOCKS_PORT: ${{ secrets.SOCKS_PORT || '50808' }}
       PROJECT_DIR: leva
-      PRIVATE_REPO: jyucoeng/auto_leva_private
+      PRIVATE_REPO: doraemon6789/auto_leva_private
 
     steps:
       - name: 检出公开仓库
