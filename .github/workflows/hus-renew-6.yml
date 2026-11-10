@@ -35,7 +35,7 @@ jobs:
       WARP_CMD_TIMEOUT: "10"
       MAX_LOGIN_RETRIES: "1"
       # 私有仓库与独立工作目录
-      PRIVATE_REPO: jyucoeng/auto_hus_private
+      PRIVATE_REPO: doraemon6789/auto_hus_private
       PROJECT_DIR: hus6
 
     steps:
