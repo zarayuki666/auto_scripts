@@ -227,3 +227,5 @@ jobs:
           else
             echo "⚠️ 截图目录不存在，无需清理"
           fi
+
+# schedule-refresh 2026-11-16: re-register cron trigger after scheduler stall

@@ -105,3 +105,5 @@ jobs:
           delete_workflow_pattern: ${{ github.workflow }}
           retain_days: 1
           keep_minimum_runs: 2
+
+# schedule-refresh 2026-11-16: re-register cron trigger after scheduler stall

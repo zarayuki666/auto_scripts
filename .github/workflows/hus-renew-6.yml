@@ -230,3 +230,5 @@ jobs:
             gh run delete "$run_id" --repo "$GITHUB_REPOSITORY" || true
           done <<< "$runs"
           echo "清理完成：保留最近 24 小时记录及所有未完成记录"
+
+# schedule-refresh 2026-11-16: re-register cron trigger after scheduler stall

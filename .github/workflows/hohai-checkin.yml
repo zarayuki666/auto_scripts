@@ -117,3 +117,5 @@ jobs:
             git push -f origin HEAD:main
             echo "✅ 更改已推送"
           fi
+
+# schedule-refresh 2026-11-16: re-register cron trigger after scheduler stall
