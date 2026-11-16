@@ -1,8 +1,5 @@
-Runner repo: jyucoeng/auto_scripts | Run ID: 21994411314 | UTC: 2026-02-13 16:30:17
+Runner repo: zarayuki666/auto_scripts | Run ID: 43983091313 | UTC: 2026-11-16 23:54:13
 
-**最后运行时间**: `2026-02-14 00:30:06`
+# XServer 续期报告
 
-**运行结果**: <br>
-🖥️服务器:`🇯🇵Xserver(MC)`<br>
-📊续期结果:ℹ️Unexpired<br>
-🕛️旧到期时间: `2026-02-15`<br>
+脚本未生成报告文件
